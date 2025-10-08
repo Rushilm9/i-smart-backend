@@ -20,7 +20,6 @@ langchain-core==0.3.78
 langchain-openai==0.3.34
 langchain-text-splitters==0.3.11
 langsmith==0.4.32
-mysql==0.0.3
 mysql-connector-python==9.4.0
 openai==2.1.0
 orjson==3.11.3
