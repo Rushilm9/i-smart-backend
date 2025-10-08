@@ -22,7 +22,6 @@ langchain-text-splitters==0.3.11
 langsmith==0.4.32
 mysql==0.0.3
 mysql-connector-python==9.4.0
-mysqlclient==2.2.7
 openai==2.1.0
 orjson==3.11.3
 packaging==25.0
