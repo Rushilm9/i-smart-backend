@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 accelerate==1.10.1
 aiohappyeyeballs==2.6.1
 aiohttp==3.13.1
 aiosignal==1.4.0
+=======
+pydantic[email]
+>>>>>>> eb9fb635625f320f8f78bb210388fb08dd70c515
 annotated-types==0.7.0
 anyio==4.11.0
 attrs==25.4.0
@@ -57,6 +61,7 @@ langchain-docling==1.1.0
 langchain-openai==0.3.34
 langchain-text-splitters==1.0.0
 langsmith==0.4.32
+<<<<<<< HEAD
 latex2mathml==3.78.1
 lazy_loader==0.4
 lxml==5.4.0
@@ -76,6 +81,9 @@ mysqlclient==2.2.7
 networkx==3.5
 ninja==1.13.0
 numpy==2.3.4
+=======
+mysql-connector-python==9.4.0
+>>>>>>> eb9fb635625f320f8f78bb210388fb08dd70c515
 openai==2.1.0
 opencv-python-headless==4.12.0.88
 openpyxl==3.1.5
