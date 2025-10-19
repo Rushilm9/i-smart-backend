@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.database import Base, engine
-from routers import auth, keyword_analyzer, projects
+from routers import auth, keyword_analyzer, projects,search_paper,research,fetch_papers,literature_review
 
 # --- Create tables (optional in dev mode) ---
 Base.metadata.create_all(bind=engine)
@@ -30,6 +30,9 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(keyword_analyzer.router)
 app.include_router(projects.router)
+app.include_router(research.router)
+app.include_router(fetch_papers.router)
+app.include_router(literature_review.router)
 
 # --- Root Endpoint ---
 @app.get("/")

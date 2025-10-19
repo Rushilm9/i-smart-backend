@@ -2,3 +2,12 @@ myenv/
 .env
 __pycache__/
 db/
+
+requirements.txt
+uploads_papers/
+service/
+uploads/
+search_paper.py
+k_backup
+fetch_data.py
+s.py

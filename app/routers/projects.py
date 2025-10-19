@@ -7,6 +7,7 @@ from typing import List, Optional
 from core.database import get_db
 from model.models import Project
 
+
 router = APIRouter(prefix="/projects", tags=["Projects"])
 
 
