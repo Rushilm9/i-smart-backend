@@ -7,11 +7,11 @@ python-dotenv==1.1.1
 mysql-connector-python==9.1.0
 
 # --- LangChain Ecosystem (Pre-LangSmith, fully compatible) ---
-langchain==0.2.12          # ✅ bumped to satisfy community dependency
+openai==1.40.3
+langchain==0.2.12
 langchain-core==0.2.27
 langchain-community==0.2.11
-langchain-text-splitters==0.2.2
-langchain-openai==0.1.14   # ✅ works with 0.2.x core
+langchain-openai==0.1.14 # ✅ works with 0.2.x core
 
 
 
