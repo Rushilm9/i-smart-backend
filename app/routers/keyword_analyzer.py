@@ -9,8 +9,8 @@ from core.database import get_db
 from model.models import Project
 from llm.llm import LLMClient
 
-from langchain_docling import DoclingLoader
-from langchain_docling.loader import ExportType
+# ✅ Use PyPDFLoader instead of Docling
+from langchain_community.document_loaders import PyPDFLoader
 
 # ====================================================
 # Router Initialization
@@ -20,6 +20,7 @@ router = APIRouter(prefix="/keyword", tags=["Keyword Analyzer"])
 # Initialize LLM client
 llm_client = LLMClient()
 
+
 # ====================================================
 # Response Models
 # ====================================================
@@ -28,6 +29,7 @@ class FileResult(BaseModel):
     file_path: Optional[str] = None
     summary: Optional[str] = None
     keywords: List[str]
+
 
 class KeywordResponse(BaseModel):
     project_id: int
@@ -106,7 +108,10 @@ async def analyze_and_store(
 ):
     """
     Analyze uploaded files and/or text prompts to extract academic keywords.
-    Stores the summarized results and keywords into the Project database table.
+    Works for both:
+    1️⃣ Only text prompt
+    2️⃣ Prompt + File(s)
+    Stores results in the Project table.
     """
 
     # Validate project ownership
@@ -144,8 +149,8 @@ async def analyze_and_store(
             with open(file_path, "wb") as f:
                 f.write(await file.read())
 
-            # Extract content
-            loader = DoclingLoader(file_path=file_path, export_type=ExportType.MARKDOWN)
+            # ✅ Load PDF content using PyPDFLoader
+            loader = PyPDFLoader(file_path)
             docs = loader.load()
             file_content = "\n\n".join(d.page_content for d in docs)
 
