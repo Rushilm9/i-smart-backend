@@ -32,7 +32,7 @@ class LLMClient:
     def __init__(self):
         """Initialize Azure OpenAI Chat model."""
         self.llm = AzureChatOpenAI(
-            azure_deployment=os.getenv("AZURE_OPENAI_DEPLOYMENT"),
+            azure_deployment="gpt-4o",
             openai_api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
             azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
             api_key=os.getenv("AZURE_OPENAI_API_KEY"),
