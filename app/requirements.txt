@@ -7,11 +7,15 @@ python-dotenv==1.1.1
 mysql-connector-python==9.1.0
 
 # --- LangChain Ecosystem (Azure compatible, pre-LangSmith) ---
-openai==1.40.3
-langchain==0.2.12
-langchain-core==0.2.27
-langchain-community==0.2.11
-langchain-openai==0.1.14
+openai==2.1.0
+langchain==0.3.27
+
+langchain-classic==1.0.0
+langchain-community==0.4
+langchain-core==1.0.0
+
+langchain-openai==0.3.34
+langchain-text-splitters==1.0.0
 
 # --- PDF / File Handling ---
 pypdf==6.1.1
