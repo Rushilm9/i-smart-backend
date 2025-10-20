@@ -6,15 +6,12 @@ httpx==0.28.1
 python-dotenv==1.1.1
 mysql-connector-python==9.1.0
 
-# --- LangChain Ecosystem (Pre-LangSmith, fully compatible) ---
+# --- LangChain Ecosystem (Azure compatible, pre-LangSmith) ---
 openai==1.40.3
 langchain==0.2.12
 langchain-core==0.2.27
 langchain-community==0.2.11
-langchain-openai==0.1.14 # ✅ works with 0.2.x core
-
-
-
+langchain-openai==0.1.14
 
 # --- PDF / File Handling ---
 pypdf==6.1.1
@@ -38,6 +35,5 @@ bcrypt==5.0.0
 email-validator==2.3.0
 passlib==1.7.4
 
-# --- Optional (if LLMClient uses OpenAI API directly) ---
-
+# --- Optional (if using Azure GPT tokenizer) ---
 tiktoken==0.11.0
