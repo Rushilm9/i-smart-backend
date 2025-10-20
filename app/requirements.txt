@@ -10,6 +10,7 @@ mysql-connector-python==9.1.0
 langchain-openai==0.3.8
 langchain-community==0.3.8
 
+python-multipart==0.0.20
 
 # --- PDF / File Handling ---
 pypdf==6.1.1
