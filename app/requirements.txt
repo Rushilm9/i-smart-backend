@@ -7,13 +7,15 @@ python-dotenv==1.1.1
 mysql-connector-python==9.1.0
 
 # --- LangChain Ecosystem ---
+# --- LangChain Ecosystem ---
 openai==2.1.0
 langchain==0.3.27
 langchain-core==0.3.79
 langchain-community==0.3.8
 langchain-classic==1.0.0
 langchain-openai==0.2.11
-langchain-text-splitters==0.3.2
+langchain-text-splitters==0.3.11
+
 
 # --- PDF / File Handling ---
 pypdf==6.1.1
