@@ -5,14 +5,14 @@ starlette==0.48.0
 httpx==0.28.1
 python-dotenv==1.1.1
 
-# --- LangChain Core (light setup for LLM + PDF) ---
-langchain==0.3.27
-langchain-core==0.3.79
-langchain-text-splitters==0.3.9
-langchain-openai==0.3.34
-langchain-community==0.3.7   # ✅ Needed for PyPDFLoader
+# --- LangChain Ecosystem (No LangSmith dependency) ---
+langchain==0.2.12
+langchain-core==0.2.41
+langchain-community==0.2.11
+langchain-text-splitters==0.2.2
+langchain-openai==0.2.11
 
-# --- PDF / File handling ---
+# --- PDF / File Handling ---
 pypdf==6.1.1
 pypdfium2==4.30.0
 openpyxl==3.1.5
@@ -20,7 +20,7 @@ python-docx==1.2.0
 python-pptx==1.0.2
 
 # --- Database / ORM ---
-SQLAlchemy==2.0.35   # ✅ Fixed: compatible with LangChain
+SQLAlchemy==2.0.35
 
 # --- Utilities ---
 pydantic==2.11.9
@@ -33,3 +33,7 @@ requests==2.32.5
 bcrypt==5.0.0
 email-validator==2.3.0
 passlib==1.7.4
+
+# --- Optional (if LLMClient uses OpenAI) ---
+openai==1.52.0
+tiktoken==0.11.0
