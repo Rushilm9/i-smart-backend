@@ -8,7 +8,7 @@ mysql-connector-python==9.1.0
 
 # --- LangChain Ecosystem ---
 langchain-openai==0.3.8
-
+langchain-community==0.4
 
 
 
