@@ -2,7 +2,7 @@ myenv/
 .env
 __pycache__/
 db/
-
+t_llm.py
 requirements.txt
 uploads_papers/
 service/
@@ -11,3 +11,5 @@ search_paper.py
 k_backup
 fetch_data.py
 s.py
+
+a_llm.py
