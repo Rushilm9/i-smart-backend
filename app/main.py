@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.database import Base, engine
-from routers import auth, keyword_analyzer, projects,search_paper,research,fetch_papers,literature_review
+from routers import auth, keyword_analyzer, projects,research,fetch_papers,literature_review
 
 # --- Create tables (optional in dev mode) ---
 Base.metadata.create_all(bind=engine)
