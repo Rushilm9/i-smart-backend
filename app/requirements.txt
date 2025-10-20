@@ -7,14 +7,9 @@ python-dotenv==1.1.1
 mysql-connector-python==9.1.0
 
 # --- LangChain Ecosystem ---
-# --- LangChain Ecosystem ---
-# --- LangChain Ecosystem ---
-
-langchain-community==0.3.8
-langchain-openai==0.3.34
-langchain==0.3.27
-
-
+langchain-openai==0.3.8
+langchain-core==0.3.34
+langsmith==0.1.125
 
 
 
