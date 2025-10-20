@@ -5,12 +5,12 @@ starlette==0.48.0
 httpx==0.28.1
 python-dotenv==1.1.1
 
-# --- LangChain Ecosystem (No LangSmith dependency) ---
-langchain==0.2.12
-langchain-core==0.2.41
+# --- LangChain Ecosystem (Pre-LangSmith, Stable) ---
+langchain==0.2.11
+langchain-core==0.2.27
 langchain-community==0.2.11
 langchain-text-splitters==0.2.2
-langchain-openai==0.2.11
+langchain-openai==0.1.14   # ✅ last version compatible with 0.2.x core
 
 # --- PDF / File Handling ---
 pypdf==6.1.1
@@ -34,6 +34,6 @@ bcrypt==5.0.0
 email-validator==2.3.0
 passlib==1.7.4
 
-# --- Optional (if LLMClient uses OpenAI) ---
+# --- Optional (if LLMClient uses OpenAI API directly) ---
 openai==1.52.0
 tiktoken==0.11.0
