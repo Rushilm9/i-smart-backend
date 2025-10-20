@@ -1,21 +1,19 @@
 # =====================================================
-# Render Deployment Configuration
+# Render Deployment Configuration for FastAPI + Azure LLM
 # =====================================================
 
 services:
   - type: web
-    name: fastapi-keyword-analyzer
+    name: fastapi-azure-keyword-analyzer
     env: python
-    plan: free                     # or 'starter', 'standard', etc.
+    plan: free
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
     startCommand: |
-      uvicorn main:app --host 0.0.0.0 --port 10000
+      uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.12
-      - key: ENV
-        value: production
       - key: PORT
         value: 10000
