@@ -13,8 +13,7 @@ langchain-community==0.2.11
 langchain-text-splitters==0.2.2
 langchain-openai==0.1.14   # ✅ works with 0.2.x core
 
-# --- LangChain / OpenAI stack (Azure-compatible) ---
-openai==1.40.3
+
 
 
 # --- PDF / File Handling ---
