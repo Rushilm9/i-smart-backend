@@ -5,6 +5,7 @@ starlette==0.48.0
 httpx==0.28.1
 python-dotenv==1.1.1
 mysql-connector-python==9.1.0
+rich==14.1.0
 
 # --- LangChain Ecosystem ---
 langchain-openai==0.3.8
