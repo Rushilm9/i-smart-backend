@@ -4,10 +4,11 @@ import re
 import uuid
 import shutil
 import json
-from typing import Dict, Optional, List, Any
+import mimetypes
+from typing import Dict, Optional, List, Any, Tuple
 
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Query
+from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel, Field, validator
 from sqlalchemy.orm import Session
 
@@ -353,19 +354,27 @@ async def upload_and_review_files(
         raise HTTPException(status_code=404, detail=f"Project {project_id} not found.")
 
     llm = LLMClient()
-    project_dir = os.path.join(UPLOAD_ROOT, f"project_{project_id}")
+    # ensure the project directory exists (idempotent)
+    project_dir = os.path.abspath(os.path.join(UPLOAD_ROOT, f"project_{project_id}"))
     os.makedirs(project_dir, exist_ok=True)
 
     results = []
     for upload in files:
         file_name = getattr(upload, "filename", "unknown")
         try:
-            # save file
+            # -------------------
+            # save file (hardened)
+            # -------------------
             ext = _safe_ext(file_name)
             if ext not in ALLOWED_EXTS:
                 raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext or 'unknown'}")
+
+            # re-ensure folder each loop (safe if called concurrently)
+            os.makedirs(project_dir, exist_ok=True)
+
             unique_name = f"{uuid.uuid4().hex}_{os.path.basename(file_name)}"
-            stored_path = os.path.join(project_dir, unique_name)
+            stored_path = os.path.abspath(os.path.join(project_dir, unique_name))
+
             with open(stored_path, "wb") as f:
                 shutil.copyfileobj(upload.file, f)
 
@@ -468,7 +477,7 @@ async def upload_and_review_files(
                     citation_count=None,
                     impact_factor=None,
                     fetched_from=None,
-                    file_path=stored_path,
+                    file_path=stored_path,  # <-- store absolute file path in DB
                 )
                 db.add(paper)
                 db.commit()
@@ -597,6 +606,98 @@ def list_project_papers(project_id: int, db: Session = Depends(get_db)):
         "papers": out,
         "message": "✅ Papers listed successfully.",
     }
+
+
+# ---------------------------
+# NEW: Only papers that HAVE a literature review
+# ---------------------------
+@router.get("/literature-review-fetch", summary="Fetch only papers with stored literature reviews")
+@router.get("/litertaure-reiew-rftech", include_in_schema=False)  # alias to match original typo path
+def literature_review_fetch(
+    project_id: Optional[int] = Query(default=None, description="Optional project filter"),
+    db: Session = Depends(get_db),
+):
+    """
+    Return ONLY the papers that already have a literature review (PaperAnalysis exists).
+    Optional: filter by project_id.
+    """
+    q = (
+        db.query(Paper, PaperAnalysis)
+        .join(PaperAnalysis, Paper.paper_id == PaperAnalysis.paper_id)
+    )
+    if project_id is not None:
+        q = q.filter(Paper.query_id == project_id)
+
+    rows: List[Tuple[Paper, PaperAnalysis]] = q.all()
+
+    out = []
+    for p, a in rows:
+        file_path = getattr(p, "file_path", None)
+        file_ext = None
+        if file_path:
+            file_ext = os.path.splitext(file_path)[1].lstrip(".").upper() or None
+
+        out.append({
+            "paper_id": p.paper_id,
+            "project_id": p.query_id,
+            "title": getattr(p, "title", None),
+            "publication_year": getattr(p, "publication_year", None),
+            "file_type": file_ext,
+            "file_path": file_path,
+            "analysis": {
+                "analysis_id": a.analysis_id,
+                "created_at": a.created_at,
+                "summary_text": a.summary_text,
+                "strengths": _deserialize_list_from_db(getattr(a, "strengths", None)),
+                "weaknesses": _deserialize_list_from_db(getattr(a, "weaknesses", None)),
+                "gaps": _deserialize_list_from_db(getattr(a, "gaps", None)),
+                "peer_reviewed": True if a.peer_reviewed == 1 else (False if a.peer_reviewed == 0 else None),
+                "critique_score": a.critique_score,
+                "tone": a.tone,
+                "sentiment_score": a.sentiment_score,
+                "semantic_patterns": _deserialize_list_from_db(getattr(a, "semantic_patterns", None)),
+            },
+        })
+
+    return {
+        "project_id": project_id,
+        "count": len(out),
+        "papers_with_reviews": out,
+        "message": "✅ Papers with literature reviews fetched successfully.",
+    }
+
+
+# ---------------------------
+# NEW: Download the uploaded raw paper file
+# ---------------------------
+@router.get("/paper/{paper_id}/download", summary="Download the raw uploaded paper")
+def download_paper(paper_id: int, db: Session = Depends(get_db)):
+    """
+    Download the raw uploaded file for a paper.
+    """
+    paper = db.query(Paper).filter(Paper.paper_id == paper_id).first()
+    if not paper:
+        raise HTTPException(status_code=404, detail=f"Paper {paper_id} not found.")
+
+    file_path = getattr(paper, "file_path", None)
+    if not file_path:
+        raise HTTPException(status_code=404, detail="No file_path stored for this paper.")
+
+    file_path = os.path.abspath(file_path)
+
+    # optional safety: ensure the file lives under UPLOAD_ROOT
+    upload_root_abs = os.path.abspath(UPLOAD_ROOT)
+    if not (file_path == upload_root_abs or file_path.startswith(upload_root_abs + os.sep)):
+        raise HTTPException(status_code=400, detail="Invalid file location.")
+
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail="Stored file not found on disk.")
+
+    media_type = mimetypes.guess_type(file_path)[0] or "application/octet-stream"
+    filename = os.path.basename(file_path)
+    return FileResponse(path=file_path, media_type=media_type, filename=filename)
+
+
 @router.delete("/paper/{paper_id}")
 def delete_paper(paper_id: int, db: Session = Depends(get_db)):
     """
@@ -630,11 +731,12 @@ def delete_paper(paper_id: int, db: Session = Depends(get_db)):
     # Attempt to delete file on disk (best-effort)
     if stored_path:
         try:
-            if os.path.exists(stored_path):
-                os.remove(stored_path)
+            stored_path_abs = os.path.abspath(stored_path)
+            if os.path.exists(stored_path_abs):
+                os.remove(stored_path_abs)
                 file_deleted = True
                 # attempt to remove parent dir if empty (optional cleanup)
-                parent = os.path.dirname(stored_path)
+                parent = os.path.dirname(stored_path_abs)
                 try:
                     if parent and os.path.isdir(parent) and not os.listdir(parent):
                         os.rmdir(parent)
